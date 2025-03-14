@@ -30,7 +30,7 @@ function Profile() {
   async function handleFollow() {
     try {
       const response = await axios.put(
-        "http://localhost:3000/api/user/follow/67cdb9a63b4fa218ddd1ab45",
+        `http://localhost:3000/api/user/follow/${id}`,
         {},
         {
           withCredentials: true,
@@ -54,11 +54,11 @@ function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex justify-center text-white">
-      <div className="w-full max-w-3xl p-5 ">
+    <div className="min-h-[90vh] bg-gray-200 flex justify-center text-white">
+      <div className="w-full max-w-3xl p-5 h-min bg-white text-black mt-4">
         {/* Profile Header */}
         <Toaster />
-        <div className="flex items-center gap-8  justify-center">
+        <div className="flex items-center gap-8  justify-center ">
           {/* Profile Picture */}
           <img
             src={user.profilePicture || "https://via.placeholder.com/150"}
