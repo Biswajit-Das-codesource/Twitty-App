@@ -33,6 +33,16 @@ const userSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
+  profileViews:[
+    {
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"user"
+    }
+  ],
+  bio:{
+    type:String
+  },
+  
 });
 
 const userModel = mongoose.model("user", userSchema);

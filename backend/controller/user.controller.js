@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { generateToken } from "../utils/generateToken.js";
 
 export async function handleRegister(req, res) {
-  const { name, password, email, phoneNumber } = req.body;
+  const { name, password, email, phoneNumber, bio } = req.body;
 
   if (!name || !password || !email || !phoneNumber) {
     return res.status(400).json({
@@ -29,6 +29,7 @@ export async function handleRegister(req, res) {
     password: hashPassword,
     phoneNumber,
     email,
+    bio,
   });
 
   res.status(200).json({
@@ -131,7 +132,7 @@ export async function handleUserProfile(req, res) {
   const userId = req.params.id;
   const loggedInUserid = req?.user?.userId;
   const Profileuser = await userModel.findById(userId).populate("following");
-
+  const loggedInUser = await userModel.findById(loggedInUserid);
   if (!userId) {
     return res.json({
       message: "No user Found",
@@ -162,11 +163,33 @@ export async function handleUserProfile(req, res) {
     res.json({
       follow: true,
       user,
+      loggedInUser,
     });
   } else {
     res.json({
       follow: false,
       user,
+      loggedInUser,
     });
+  }
+
+  if (!loggedInUserid) {
+    return res.status(400).json({
+      message: "Invalid",
+      success: false,
+    });
+  }
+
+  if (!user) {
+    return res.status(400).json({
+      message: "No user found",
+      success: false,
+    });
+  }
+
+  if (!user.profileViews.includes(loggedInUserid)) {
+    await user.updateOne({ $push: { profileViews: loggedInUserid } });
+  } else {
+    return;
   }
 }

@@ -7,12 +7,14 @@ const cardSlice = createSlice({
     },
     reducers:{
         setuser:(state,action)=>{
-            state.user=action.payload;
+            state.user=action.payload || null;
+        },
+        refreshUserState: (state) => {
+            state.user = { ...state.user }; // Forces state update without changing value
         }
     }
-
-
+    
 })
 
-export const {setuser}=cardSlice.actions;
+export const {setuser,refreshUserState}=cardSlice.actions;
 export default cardSlice.reducer

@@ -1,6 +1,7 @@
+import { refreshUserState, setuser } from "@/redux/Slice";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 import { toast, Toaster } from "sonner";
 
@@ -11,6 +12,7 @@ function Profile() {
   const [showFollowing, setShowFollowing] = useState(false);
 
   const { id } = useParams();
+  const dispatch = useDispatch()
 
   async function fetchUser() {
     try {
@@ -18,13 +20,15 @@ function Profile() {
         `http://localhost:3000/api/user/profile/${id}`,
         { withCredentials: true }
       );
-      setUser(response.data.user);
-      setFollow(response.data.follow);
+      setUser(response?.data?.user);
+      setFollow(response?.data?.follow);
+      console.log(response?.data)
+      dispatch(setuser(response?.data?.loggedInUser))
     } catch (err) {
       toast.error("Failed to load profile");
     }
   }
-
+  
   async function handleFollow() {
     try {
       const response = await axios.put(
@@ -32,10 +36,12 @@ function Profile() {
         {},
         { withCredentials: true }
       );
-      setFollow(response.data.follow);
-      toast.success(response.data.message);
+      setFollow(response?.data?.follow);
+      toast.success(response?.data?.message);
+    
+      dispatch(setuser(response?.data?.loggedInUser))
     } catch (err) {
-      toast.error(err.response.data.message);
+      toast.error(err?.response?.data?.message);
     }
   }
 
