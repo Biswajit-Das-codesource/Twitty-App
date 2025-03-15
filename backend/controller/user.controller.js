@@ -130,7 +130,7 @@ export async function handleBookMark(req, res) {
 export async function handleUserProfile(req, res) {
   const userId = req.params.id;
   const loggedInUserid = req?.user?.userId;
-  const Profileuser = await userModel.findById(userId);
+  const Profileuser = await userModel.findById(userId).populate("following");
 
   if (!userId) {
     return res.json({
@@ -141,7 +141,11 @@ export async function handleUserProfile(req, res) {
 
   console.log(loggedInUserid);
 
-  const user = await userModel.findById(userId);
+  const user = await userModel
+    .findById(userId)
+    .populate("following")
+    .populate("follower");
+
   if (!user) {
     return res.json({
       message: "No user Found",

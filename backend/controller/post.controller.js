@@ -59,6 +59,12 @@ export async function handleComments(req, res) {
 
   const { text } = req.body;
 
+  if(!text){
+   return res.json({
+      message:"Please Enter Your Comment",
+      success:false
+    })
+  }
   const loggedInUserid = req.user.userId;
   if (!loggedInUserid) {
     return res.status(400).json({
@@ -96,4 +102,13 @@ export async function handleAllfeeds(req,res) {
     success:true
   })
   
+}
+
+export async function handleDelete(req,res) {
+  const postId =  req.params.id
+  const post = await postModel.findByIdAndDelete(postId)
+  res.json({
+    message:"deleted successFully",
+    success:true
+  })
 }

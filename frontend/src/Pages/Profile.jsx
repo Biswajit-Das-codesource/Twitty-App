@@ -6,7 +6,9 @@ import { toast, Toaster } from "sonner";
 
 function Profile() {
   const [user, setUser] = useState(null);
-  const [follow, setFollow] = useState(Boolean);
+  const [follow, setFollow] = useState(false);
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
 
   const { id } = useParams();
 
@@ -14,13 +16,9 @@ function Profile() {
     try {
       const response = await axios.get(
         `http://localhost:3000/api/user/profile/${id}`,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       setUser(response.data.user);
-      console.log(response.data.user);
-      console.log(response.data.follow);
       setFollow(response.data.follow);
     } catch (err) {
       toast.error("Failed to load profile");
@@ -32,15 +30,11 @@ function Profile() {
       const response = await axios.put(
         `http://localhost:3000/api/user/follow/${id}`,
         {},
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       setFollow(response.data.follow);
       toast.success(response.data.message);
-      console.log(response);
     } catch (err) {
-      console.log(err);
       toast.error(err.response.data.message);
     }
   }
@@ -56,37 +50,25 @@ function Profile() {
   return (
     <div className="min-h-[90vh] bg-gray-200 flex justify-center text-white">
       <div className="w-full max-w-3xl p-5 h-min bg-white text-black mt-4">
-        {/* Profile Header */}
         <Toaster />
-        <div className="flex items-center gap-8  justify-center ">
-          {/* Profile Picture */}
+        <div className="flex items-center gap-8 justify-center">
           <img
             src={user.profilePicture || "https://via.placeholder.com/150"}
             alt="Profile"
             className="w-28 h-28 rounded-full border-2 border-gray-500"
           />
 
-          {/* User Info */}
           <div>
             <div className="flex items-center gap-4">
               <h1 className="text-xl font-semibold">
                 {user?.name?.toUpperCase()}
               </h1>
-              {!follow ? (
-                <button
-                  className="px-4 py-1 bg-blue-500 rounded-md text-white"
-                  onClick={handleFollow}
-                >
-                  follow
-                </button>
-              ) : (
-                <button
-                  className="px-4 py-1 bg-blue-500 rounded-md text-white"
-                  onClick={handleFollow}
-                >
-                  unfollow
-                </button>
-              )}
+              <button
+                className="px-4 py-1 bg-blue-500 rounded-md text-white"
+                onClick={handleFollow}
+              >
+                {follow ? "Unfollow" : "Follow"}
+              </button>
             </div>
 
             {/* Stats */}
@@ -94,16 +76,22 @@ function Profile() {
               <p>
                 <strong>{user.posts?.length || 0}</strong> posts
               </p>
-              <p>
+              <p
+                className="cursor-pointer text-blue-500"
+                onClick={() => setShowFollowers(true)}
+              >
                 <strong>{user.follower?.length || 0}</strong> followers
               </p>
-              <p>
+              <p
+                className="cursor-pointer text-blue-500"
+                onClick={() => setShowFollowing(true)}
+              >
                 <strong>{user.following?.length || 0}</strong> following
               </p>
             </div>
 
             {/* Bio */}
-            <p className="mt-2 text-gray-300">
+            <p className="mt-2 text-gray-600">
               {user.bio || "No bio available"}
             </p>
           </div>
@@ -125,6 +113,58 @@ function Profile() {
           )}
         </div>
       </div>
+
+      {/* Followers Modal */}
+      {showFollowers && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-5 rounded-lg w-96 text-black">
+            <h2 className="text-lg font-bold mb-3">Followers</h2>
+            <ul>
+              {user.follower.length > 0 ? (
+                user.follower.map((follower, index) => (
+                  <li key={index} className="border-b py-2">
+                    {follower.name}
+                  </li>
+                ))
+              ) : (
+                <p>No followers</p>
+              )}
+            </ul>
+            <button
+              className="mt-3 px-4 py-2 bg-gray-500 text-white rounded-lg"
+              onClick={() => setShowFollowers(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Following Modal */}
+      {showFollowing && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-5 rounded-lg w-96 text-black">
+            <h2 className="text-lg font-bold mb-3">Following</h2>
+            <ul>
+              {user.following.length > 0 ? (
+                user.following.map((following, index) => (
+                  <li key={index} className="border-b py-2">
+                    {following.name}
+                  </li>
+                ))
+              ) : (
+                <p>Not following anyone</p>
+              )}
+            </ul>
+            <button
+              className="mt-3 px-4 py-2 bg-gray-500 text-white rounded-lg"
+              onClick={() => setShowFollowing(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
