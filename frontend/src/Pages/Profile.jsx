@@ -3,7 +3,7 @@ import { refreshUserState, setuser } from "@/redux/Slice";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router";
+import { Navigate, useParams } from "react-router";
 import { toast, Toaster } from "sonner";
 
 function Profile() {
@@ -15,6 +15,15 @@ function Profile() {
 
   const { id } = useParams();
   const dispatch = useDispatch()
+
+  
+  const isUser = useSelector((store) => store.app.user);
+  // console.log(isUser);
+
+  if (!isUser) {
+    return <Navigate to="/login" replace />;
+  }
+  
 
   async function fetchUser() {
     try {

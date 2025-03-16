@@ -3,8 +3,18 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router";
+import { toast, Toaster } from "sonner";
 
 function Post({fun,on}) {
+  const isUser = useSelector((store) => store.app.user);
+    // console.log(isUser);
+  
+    if (!isUser) {
+      return <Navigate to="/login" replace />;
+    }
+    
   const [input, setInput] = useState({
     description: "",
     message: "",
@@ -17,7 +27,7 @@ function Post({fun,on}) {
     setInput({ ...input, [name]: value });
   }
 
-  console.log(input);
+  // console.log(input);
 
   async function handleSubmit() {
     try {
@@ -33,9 +43,11 @@ function Post({fun,on}) {
       fun()
       on(false)
       //comes from props
+      toast.success(response?.data?.message)
       console.log(response);
     } catch (err) {
       console.log(err);
+      toast.warning(err?.response?.data?.message)
     }
   }
 
@@ -43,6 +55,7 @@ function Post({fun,on}) {
     <div className="absolute w-5xl bg-slate-100 border-none bottom-0">
       <Card className="m-3 flex flex-col justify-around items-center border-none">
         <b>Post</b>
+        <Toaster/>
         <Input
           placeholder="Enter you post Title"
           className="h-10  w-1/2 mx-2"

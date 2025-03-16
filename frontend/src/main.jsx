@@ -13,6 +13,7 @@ import store from "./redux/Store";
 import { persistStore } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import Feed from "./Pages/Feed";
+import FeedComment from "./Pages/FeedComment";
 const persist = persistStore(store);
 const reactRouters = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const reactRouters = createBrowserRouter([
         path: "/profile/:id",
         element: <Profile />,
       },
+      {
+        path: "/postcomment/:id",
+        element: <FeedComment />,
+      },
     ],
   },
 ]);
@@ -43,9 +48,7 @@ createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persist}>
       <RouterProvider router={reactRouters}>
-       
-          <App />
-       
+        <App />
       </RouterProvider>
     </PersistGate>
   </Provider>

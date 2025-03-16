@@ -17,7 +17,7 @@ export async function handleSendPost(req, res) {
     createdBy: req.user.userId,
   });
   res.json({
-    message: "done",
+    message: "Posted successFully",
   });
 }
 
@@ -113,5 +113,34 @@ export async function handleDelete(req,res) {
   res.json({
     message:"deleted successFully",
     success:true
+  })
+}
+
+
+export async function handleGetOnePost(req,res) {
+
+  const postId = req?.params?.id
+
+  console.log(typeof(postId))
+
+  if(!postId){
+    return res.json({
+      message:"Invalid",
+      success:false
+    })
+  }
+  
+  const post = await postModel.findById(postId).populate("comment.commentBy")
+
+  if(!post){
+    return res.status(400).json({
+      message:"Invalid post",
+      success:false
+    })
+  }
+
+  res.status(200).json({
+    message:"post",
+    post
   })
 }

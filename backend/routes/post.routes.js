@@ -3,6 +3,7 @@ import {
   handleAllfeeds,
   handleComments,
   handleDelete,
+  handleGetOnePost,
   handleLikes,
   handleSendPost,
 } from "../controller/post.controller.js";
@@ -15,4 +16,5 @@ app.post("/like/:id", checkAuth, handleLikes);
 app.post("/comment/:id", checkAuth, handleComments);
 app.get("/feeds",handleAllfeeds)
 app.delete("/delete/:id",handleDelete)
+app.get("/getpost/:id",handleGetOnePost)
 export default app;

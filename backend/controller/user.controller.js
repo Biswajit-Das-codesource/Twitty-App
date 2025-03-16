@@ -4,9 +4,9 @@ import { generateToken } from "../utils/generateToken.js";
 import postModel from "../model/post.model.js";
 
 export async function handleRegister(req, res) {
-  const { name, password, email, phoneNumber, bio } = req.body;
+  const { name, password, email, bio } = req.body;
 
-  if (!name || !password || !email || !phoneNumber) {
+  if (!name || !password || !email) {
     return res.status(400).json({
       message: "All Fields required",
       success: false,
@@ -14,11 +14,10 @@ export async function handleRegister(req, res) {
   }
 
   const isEmail = await userModel.findOne({ email });
-  const isPhone = await userModel.findOne({ phoneNumber });
-
-  if (isEmail || isPhone) {
+ 
+  if (isEmail) {
     return res.status(400).json({
-      message: "Try with another email,phoneNumber",
+      message: "Try with another email",
       success: false,
     });
   }
@@ -28,13 +27,12 @@ export async function handleRegister(req, res) {
   await userModel.create({
     name,
     password: hashPassword,
-    phoneNumber,
     email,
     bio,
   });
 
   res.status(200).json({
-    message: "Register successFully",
+    message: "Register successFully,Redirecting.....",
     success: true,
   });
 }
@@ -69,7 +67,7 @@ export async function handleLogin(req, res) {
 
   generateToken(user, res);
   res.json({
-    message: "Login successFully",
+    message: "Login successFully,Redirecting .....",
     success: true,
     user,
   });

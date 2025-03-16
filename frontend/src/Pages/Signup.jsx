@@ -13,13 +13,15 @@ import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { useState } from "react";
 import axios from "axios";
+import { toast, Toaster } from "sonner";
+import { useNavigate } from "react-router";
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [input, setInput] = useState({
     name: "",
     password: "",
-    phoneNumber:"",
-    email:""
+    email: "",
   });
 
   function handleChangeInput(e) {
@@ -32,21 +34,31 @@ export default function Signup() {
   }
 
   async function handleClick(e) {
-    e.preventDefault()
+    e.preventDefault();
     console.log(input);
     try {
-      const response = await axios.post("http://localhost:3000/api/user/signup", input, {
-        withCredentials: true,
-      });
-      console.log(response)
+      const response = await axios.post(
+        "http://localhost:3000/api/user/signup",
+        input,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response);
+      toast.success(response?.data?.message);
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
     } catch (err) {
       console.log(err);
+      toast.error(err?.response?.data?.message);
     }
   }
 
   return (
-    <div className="min-h-screen w-full flex justify-center items-center bg-black">
-      <Card className="w-[350px] dark:bg-black text-white ">
+    <div className="min-h-screen w-full flex justify-center items-center bg-gray-200">
+      <Toaster />
+      <Card className="w-[350px] border-none shadow-2xl rounded-2xl bg-white">
         <CardHeader>
           <CardTitle>Login Your Account</CardTitle>
           <CardDescription>Welcome back sir/mam</CardDescription>
@@ -72,15 +84,7 @@ export default function Signup() {
                   name="email"
                 />
               </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">Phone Number</Label>
-                <Input
-                  id="phoneNumber"
-                  placeholder="Enter Your Phonenumber"
-                  onChange={handleChangeInput}
-                  name="phoneNumber"
-                />
-              </div>
+
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="framework">Password</Label>
                 <Input
@@ -95,8 +99,8 @@ export default function Signup() {
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button variant="outline">Cancel</Button>
-          <Button className="bg-white text-black" onClick={handleClick}>
-            Login
+          <Button className="bg-black text-white" onClick={handleClick}>
+            Register
           </Button>
         </CardFooter>
       </Card>

@@ -16,10 +16,12 @@ import axios from "axios";
 import { toast, Toaster } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setuser } from "@/redux/Slice";
+import { Link, useNavigate } from "react-router";
 
 export default function Login() {
 
-  const disPatch= useDispatch()
+  const navigate=useNavigate()
+  const disPatch = useDispatch();
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -45,8 +47,8 @@ export default function Login() {
       );
       toast.success(Response.data.message);
       console.log(Response.data);
-      
-      disPatch(setuser(Response.data.user))
+      setTimeout(()=>navigate("/"),2000)
+      disPatch(setuser(Response.data.user));
     } catch (err) {
       console.log(err);
       toast.error(Response.data.message);
@@ -54,8 +56,8 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen w-full flex justify-center items-center bg-black">
-      <Card className="w-[350px] dark:bg-black text-white ">
+    <div className="min-h-screen w-full flex justify-center items-center bg-gray-200">
+      <Card className="w-[350px] dark:bg-white text-black border-none shadow-2xl">
         <Toaster />
         <CardHeader>
           <CardTitle>Login Your Account</CardTitle>
@@ -87,10 +89,16 @@ export default function Login() {
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button variant="outline">Cancel</Button>
-          <Button className="bg-white text-black" onClick={handleClick}>
+          <Button className="bg-black text-white" onClick={handleClick}>
             Login
           </Button>
         </CardFooter>
+        <p className="text-center">
+          Dont't Have account?
+          <Link to="/signup">
+            <b className="underline cursor-pointer">Signup</b>
+          </Link>
+        </p>
       </Card>
     </div>
   );

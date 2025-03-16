@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 import { SlLike } from "react-icons/sl";
 import { FaRegCommentAlt } from "react-icons/fa";
 import axios from "axios";
-import { Link } from "react-router";
+import { Link, Navigate } from "react-router";
 import { useSelector } from "react-redux";
 import { AiFillDelete } from "react-icons/ai";
 import Post from "./Post";
@@ -61,11 +61,10 @@ function Feed() {
     handleFetchFeeds();
   }, []);
 
-
-  console.log(commentText)
+  console.log(commentText);
   async function handleComment(id) {
     try {
-      const response= await axios.post(
+      const response = await axios.post(
         `http://localhost:3000/api/post/comment/${id}`,
         commentText,
         {
@@ -73,13 +72,12 @@ function Feed() {
         }
       );
       handleFetchFeeds();
-      console.log(response.data)
-      toast.success(response.data.message)
-      setCommentText({text:""})
-      
+      // console.log(response.data);
+      toast.success(response.data.message);
+      setCommentText({ text: "" });
     } catch (err) {
       console.log(err);
-      toast.warning(err?.response?.data?.message)
+      toast.warning(err?.response?.data?.message);
     }
   }
   const user = useSelector((store) => store.app?.user);
@@ -94,6 +92,17 @@ function Feed() {
       console.log(err);
     }
   }
+
+  // user is there not
+
+  const isUser = useSelector((store) => store.app.user);
+  // console.log(isUser);
+
+  if (!isUser) {
+    return <Navigate to="/login" replace />;
+  }
+  
+
   return (
     <div className="min-h-screen w-full bg-gray-200 flex justify-center p-4 md:p-6">
       <div className="w-full max-w-6xl flex flex-col md:flex-row gap-6">
@@ -116,7 +125,7 @@ function Feed() {
             <b>Bookmarks</b>
           </div>
         </div>
-      <Toaster  richColors/>
+        <Toaster richColors />
         {/* Feed Section */}
         <div className="w-full md:w-2/3 lg:w-3/4 space-y-2 overflow-y-auto mb-10">
           <Card className="bg-white p-4 rounded-2xl shadow-md">
@@ -170,10 +179,15 @@ function Feed() {
                   <SlLike className="mr-2" />
                   {e?.likes?.length}
                 </Button>
-                <Button className="flex items-center bg-black text-white" onClick={() => setCommments(!comments)}>
-                  <FaRegCommentAlt className="mr-2" />
-                  {e?.comment?.length}
-                </Button>
+                <Link to={`/postcomment/${e._id}`}>
+                  <Button
+                    className="flex items-center bg-black text-white"
+                    onClick={() => setCommments(!comments)}
+                  >
+                    <FaRegCommentAlt className="mr-2" />
+                    {e?.comment?.length}
+                  </Button>
+                </Link>
               </div>
 
               <div className="w-full flex">
@@ -196,7 +210,10 @@ function Feed() {
               {e?.comment?.length === 0 ? (
                 <p className=" text-gray-500">No comments yet</p>
               ) : (
-                <div className="bg-gray-100 p-3 rounded-2xl" onClick={() => setCommments(!comments)}>
+                <div
+                  className="bg-gray-100 p-3 rounded-2xl"
+                  onClick={() => setCommments(!comments)}
+                >
                   <b>{e?.comment?.at(-1)?.commentBy?.name}</b>
                   <p>{e?.comment?.at(-1)?.text}</p>
                 </div>
