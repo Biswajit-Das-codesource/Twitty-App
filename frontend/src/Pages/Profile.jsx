@@ -7,6 +7,10 @@ import { Navigate, useParams } from "react-router";
 import { toast, Toaster } from "sonner";
 
 function Profile() {
+  const isUser = useSelector((store) => store.app.user);
+  // console.log(isUser);
+
+  
   const [user, setUser] = useState(null);
   const [follow, setFollow] = useState(false);
   const [showFollowers, setShowFollowers] = useState(false);
@@ -16,14 +20,6 @@ function Profile() {
   const { id } = useParams();
   const dispatch = useDispatch()
 
-  
-  const isUser = useSelector((store) => store.app.user);
-  // console.log(isUser);
-
-  if (!isUser) {
-    return <Navigate to="/login" replace />;
-  }
-  
 
   async function fetchUser() {
     try {
