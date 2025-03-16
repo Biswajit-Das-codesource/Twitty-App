@@ -60,11 +60,12 @@ export async function handleComments(req, res) {
   const { text } = req.body;
 
   if(!text){
-   return res.json({
+   return res.status(401).json({
       message:"Please Enter Your Comment",
       success:false
     })
   }
+
   const loggedInUserid = req.user.userId;
   if (!loggedInUserid) {
     return res.status(400).json({
@@ -88,8 +89,10 @@ export async function handleComments(req, res) {
   await post.updateOne({ $push: { comment: commentDetails } });
 
   res.json({
-    message: "success",
+    message: "Comment Added",
   });
+
+
 }
 
 

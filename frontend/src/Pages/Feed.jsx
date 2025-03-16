@@ -15,11 +15,13 @@ import { Link } from "react-router";
 import { useSelector } from "react-redux";
 import { AiFillDelete } from "react-icons/ai";
 import Post from "./Post";
+import { toast, Toaster } from "sonner";
 
 function Feed() {
   const [feeds, setFeeds] = useState([]);
   const [commentText, setCommentText] = useState({ text: "" });
   const [postInput, setPostInput] = useState(false);
+  const [comments, setCommments] = useState(false);
 
   function handleInput(e) {
     const name = e.target.name;
@@ -33,6 +35,8 @@ function Feed() {
         withCredentials: true,
       });
       setFeeds(response.data?.posts?.reverse() || []);
+      console.log(response.data);
+      setCommments(response?.data?.posts?.comment);
     } catch (err) {
       console.log(err);
     }
@@ -40,9 +44,13 @@ function Feed() {
 
   async function handleLike(id) {
     try {
-      await axios.post(`http://localhost:3000/api/post/like/${id}`, {}, {
-        withCredentials: true,
-      });
+      await axios.post(
+        `http://localhost:3000/api/post/like/${id}`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
       handleFetchFeeds();
     } catch (err) {
       console.log(err);
@@ -53,14 +61,25 @@ function Feed() {
     handleFetchFeeds();
   }, []);
 
+
+  console.log(commentText)
   async function handleComment(id) {
     try {
-      await axios.post(`http://localhost:3000/api/post/comment/${id}`, commentText, {
-        withCredentials: true,
-      });
+      const response= await axios.post(
+        `http://localhost:3000/api/post/comment/${id}`,
+        commentText,
+        {
+          withCredentials: true,
+        }
+      );
       handleFetchFeeds();
+      console.log(response.data)
+      toast.success(response.data.message)
+      setCommentText({text:""})
+      
     } catch (err) {
       console.log(err);
+      toast.warning(err?.response?.data?.message)
     }
   }
   const user = useSelector((store) => store.app?.user);
@@ -87,18 +106,17 @@ function Feed() {
             <p className="p-2">{user?.bio}</p>
           </div>
           <div className="bg-white p-4 rounded-2xl shadow-md">
-          <b>Following: {user?.following?.length}</b>
-            <br/>
+            <b>Following: {user?.following?.length}</b>
+            <br />
             <b>Follower: {user?.follower?.length}</b>
             <br />
             <b>Profile Views: {user?.profileViews?.length}</b>
-           
           </div>
           <div className="bg-white p-4 rounded-2xl shadow-md">
             <b>Bookmarks</b>
           </div>
         </div>
-
+      <Toaster  richColors/>
         {/* Feed Section */}
         <div className="w-full md:w-2/3 lg:w-3/4 space-y-2 overflow-y-auto mb-10">
           <Card className="bg-white p-4 rounded-2xl shadow-md">
@@ -111,7 +129,10 @@ function Feed() {
           </Card>
 
           {feeds?.map((e) => (
-            <Card key={e?._id} className="bg-white p-4 rounded-2xl border-none mt-4 shadow-md">
+            <Card
+              key={e?._id}
+              className="bg-white p-4 rounded-2xl border-none mt-4 shadow-md"
+            >
               <div className="flex justify-between">
                 <div className="flex items-center">
                   <img
@@ -127,7 +148,10 @@ function Feed() {
                   </div>
                 </div>
                 {e?.createdBy?._id === user?._id && (
-                  <Button className="bg-black text-white" onClick={() => handleDelete(e?._id)}>
+                  <Button
+                    className="bg-black text-white"
+                    onClick={() => handleDelete(e?._id)}
+                  >
                     <AiFillDelete size="1.3rem" />
                   </Button>
                 )}
@@ -139,11 +163,14 @@ function Feed() {
               </div>
 
               <div className=" flex gap-4">
-                <Button className="flex items-center bg-black text-white" onClick={() => handleLike(e?._id)}>
+                <Button
+                  className="flex items-center bg-black text-white"
+                  onClick={() => handleLike(e?._id)}
+                >
                   <SlLike className="mr-2" />
                   {e?.likes?.length}
                 </Button>
-                <Button className="flex items-center bg-black text-white">
+                <Button className="flex items-center bg-black text-white" onClick={() => setCommments(!comments)}>
                   <FaRegCommentAlt className="mr-2" />
                   {e?.comment?.length}
                 </Button>
@@ -156,8 +183,12 @@ function Feed() {
                   placeholder="Add your comment here"
                   name="text"
                   onChange={handleInput}
+                  value={commentText.text}
                 />
-                <Button className="bg-black text-white py-5 ml-2" onClick={() => handleComment(e?._id)}>
+                <Button
+                  className="bg-black text-white py-5 ml-2"
+                  onClick={() => handleComment(e?._id)}
+                >
                   Post
                 </Button>
               </div>
@@ -165,11 +196,33 @@ function Feed() {
               {e?.comment?.length === 0 ? (
                 <p className=" text-gray-500">No comments yet</p>
               ) : (
-                <div className="bg-gray-100 p-3 rounded-2xl">
+                <div className="bg-gray-100 p-3 rounded-2xl" onClick={() => setCommments(!comments)}>
                   <b>{e?.comment?.at(-1)?.commentBy?.name}</b>
                   <p>{e?.comment?.at(-1)?.text}</p>
                 </div>
               )}
+              {/* All posts  */}
+              <div
+                className="space-y-3"
+                onClick={() => setCommments(!comments)}
+              >
+                {/* {comments ? (
+                  <>
+                    {e.comment.map((e) => {
+                      return (
+                        <>
+                          <div className="bg-gray-100 p-3 rounded-2xl">
+                            <b>{e?.commentBy?.name}</b>
+                            <p>{e?.text}</p>
+                          </div>
+                        </>
+                      );
+                    })}
+                  </>
+                ) : (
+                  ""
+                )} */}
+              </div>
             </Card>
           ))}
         </div>

@@ -1,3 +1,4 @@
+import { Card } from "@/components/ui/card";
 import { refreshUserState, setuser } from "@/redux/Slice";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -10,6 +11,7 @@ function Profile() {
   const [follow, setFollow] = useState(false);
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowing, setShowFollowing] = useState(false);
+  const [posts,setPosts]=useState([])
 
   const { id } = useParams();
   const dispatch = useDispatch()
@@ -23,6 +25,7 @@ function Profile() {
       setUser(response?.data?.user);
       setFollow(response?.data?.follow);
       console.log(response?.data)
+      setPosts(response?.data?.userPosts)
       dispatch(setuser(response?.data?.loggedInUser))
     } catch (err) {
       toast.error("Failed to load profile");
@@ -54,16 +57,10 @@ function Profile() {
   }
 
   return (
-    <div className="min-h-[90vh] bg-gray-200 flex justify-center text-white">
-      <div className="w-full max-w-3xl p-5 h-min bg-white text-black mt-4">
+    <div className="min-h-[90vh] bg-gray-200 flex justify-center  text-white">
+      <div className="w-full max-w-3xl p-5 h-min bg-white text-black mt-4 shadow-2xl rounded-3xl">
         <Toaster />
         <div className="flex items-center gap-8 justify-center">
-          <img
-            src={user.profilePicture || "https://via.placeholder.com/150"}
-            alt="Profile"
-            className="w-28 h-28 rounded-full border-2 border-gray-500"
-          />
-
           <div>
             <div className="flex items-center gap-4">
               <h1 className="text-xl font-semibold">
@@ -104,15 +101,14 @@ function Profile() {
         </div>
 
         {/* Posts Grid */}
-        <div className="grid grid-cols-3 gap-2 mt-5">
-          {user.posts?.length > 0 ? (
-            user.posts.map((post, index) => (
-              <img
-                key={index}
-                src={post.imageUrl}
-                alt="Post"
-                className="w-full h-32 object-cover"
-              />
+        <div className="h-[50vh] mt-6 overflow-y-scroll">
+          <h2 className="font-bold text-lg ml-3">Posts</h2>
+          {posts?.length > 0 ? (
+            posts.map((post, index) => (
+              <div className="p-4 mt-3 shadow-lg rounded-3xl shadow-amber-200">
+                <b>{post.message  }</b>
+                <p>{post.description}</p>
+              </div>
             ))
           ) : (
             <p className="col-span-3 text-center text-gray-400">No posts yet</p>

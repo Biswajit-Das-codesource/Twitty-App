@@ -1,6 +1,7 @@
 import userModel from "../model/user.model.js";
 import bcrypt from "bcrypt";
 import { generateToken } from "../utils/generateToken.js";
+import postModel from "../model/post.model.js";
 
 export async function handleRegister(req, res) {
   const { name, password, email, phoneNumber, bio } = req.body;
@@ -159,19 +160,6 @@ export async function handleUserProfile(req, res) {
   //   user,
   //   success: true,
   // });
-  if (Profileuser.follower.includes(loggedInUserid)) {
-    res.json({
-      follow: true,
-      user,
-      loggedInUser,
-    });
-  } else {
-    res.json({
-      follow: false,
-      user,
-      loggedInUser,
-    });
-  }
 
   if (!loggedInUserid) {
     return res.status(400).json({
@@ -184,6 +172,30 @@ export async function handleUserProfile(req, res) {
     return res.status(400).json({
       message: "No user found",
       success: false,
+    });
+  }
+
+  const posts = await postModel.find({});
+
+  console.log(typeof userId);
+
+  const userPosts = posts.filter((e) => {
+    return String(e.createdBy) === userId;
+  });
+
+  if (Profileuser.follower.includes(loggedInUserid)) {
+    res.json({
+      follow: true,
+      user,
+      loggedInUser,
+      userPosts
+    });
+  } else {
+    res.json({
+      follow: false,
+      user,
+      loggedInUser,
+      userPosts
     });
   }
 
