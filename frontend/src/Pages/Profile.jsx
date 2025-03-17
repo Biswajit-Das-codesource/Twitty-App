@@ -10,16 +10,14 @@ function Profile() {
   const isUser = useSelector((store) => store.app.user);
   // console.log(isUser);
 
-  
   const [user, setUser] = useState(null);
   const [follow, setFollow] = useState(false);
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowing, setShowFollowing] = useState(false);
-  const [posts,setPosts]=useState([])
+  const [posts, setPosts] = useState([]);
 
   const { id } = useParams();
-  const dispatch = useDispatch()
-
+  const dispatch = useDispatch();
 
   async function fetchUser() {
     try {
@@ -29,14 +27,14 @@ function Profile() {
       );
       setUser(response?.data?.user);
       setFollow(response?.data?.follow);
-      console.log(response?.data)
-      setPosts(response?.data?.userPosts)
-      dispatch(setuser(response?.data?.loggedInUser))
+      console.log(response?.data);
+      setPosts(response?.data?.userPosts);
+      dispatch(setuser(response?.data?.loggedInUser));
     } catch (err) {
       toast.error("Failed to load profile");
     }
   }
-  
+
   async function handleFollow() {
     try {
       const response = await axios.put(
@@ -46,8 +44,8 @@ function Profile() {
       );
       setFollow(response?.data?.follow);
       toast.success(response?.data?.message);
-    
-      dispatch(setuser(response?.data?.loggedInUser))
+
+      dispatch(setuser(response?.data?.loggedInUser));
     } catch (err) {
       toast.error(err?.response?.data?.message);
     }
@@ -111,7 +109,7 @@ function Profile() {
           {posts?.length > 0 ? (
             posts.map((post, index) => (
               <div className="p-4 mt-3 shadow-lg rounded-3xl shadow-amber-200">
-                <b>{post.message  }</b>
+                <b>{post.message}</b>
                 <p>{post.description}</p>
               </div>
             ))

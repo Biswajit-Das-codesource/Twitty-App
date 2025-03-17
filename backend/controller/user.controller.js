@@ -203,3 +203,32 @@ export async function handleUserProfile(req, res) {
     return;
   }
 }
+
+
+export async function handleEditProfile(req,res) {
+
+  const id = req?.user?.userId
+    const {name,email,bio}=req.body
+
+    const user = await userModel.findById(id);
+
+    if(!user){
+      return res.status(401).json({
+        message:"Invalid",
+        success:false
+      })
+    }
+    
+  
+    user.name = name || user.name
+    user.email = email || user.email
+    user.bio=bio || user.bio
+    // user.password = hashPassword || user.password
+
+    await user.save()
+
+    res.status(200).json({
+      message:"Edited Profile",
+      success:true
+    })
+}

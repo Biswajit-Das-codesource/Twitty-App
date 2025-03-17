@@ -14,6 +14,7 @@ import { persistStore } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import Feed from "./Pages/Feed";
 import FeedComment from "./Pages/FeedComment";
+import ProfilePage from "./Pages/OwnProfile";
 const persist = persistStore(store);
 const reactRouters = createBrowserRouter([
   {
@@ -39,6 +40,10 @@ const reactRouters = createBrowserRouter([
       {
         path: "/postcomment/:id",
         element: <FeedComment />,
+      },
+      {
+        path: "/profile",
+        element: <ProfilePage />,
       },
     ],
   },
