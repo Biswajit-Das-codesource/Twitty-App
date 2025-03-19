@@ -52,7 +52,7 @@ function Post({fun,on}) {
   }
 
   return (
-    <div className="absolute w-5xl bg-slate-100 border-none bottom-0">
+    <div className="absolute md:w-5xl w-full bg-slate-100 border-none bottom-0">
       <Card className="m-3 flex flex-col justify-around items-center border-none">
         <b>Post</b>
         <Toaster/>

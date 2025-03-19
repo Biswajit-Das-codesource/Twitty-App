@@ -14,7 +14,7 @@ export async function handleRegister(req, res) {
   }
 
   const isEmail = await userModel.findOne({ email });
- 
+
   if (isEmail) {
     return res.status(400).json({
       message: "Try with another email",
@@ -186,14 +186,14 @@ export async function handleUserProfile(req, res) {
       follow: true,
       user,
       loggedInUser,
-      userPosts
+      userPosts,
     });
   } else {
     res.json({
       follow: false,
       user,
       loggedInUser,
-      userPosts
+      userPosts,
     });
   }
 
@@ -204,31 +204,42 @@ export async function handleUserProfile(req, res) {
   }
 }
 
+export async function handleEditProfile(req, res) {
+  const id = req?.user?.userId;
+  const { name, email, bio } = req.body;
 
-export async function handleEditProfile(req,res) {
+  const user = await userModel.findById(id);
 
-  const id = req?.user?.userId
-    const {name,email,bio}=req.body
+  if (!user) {
+    return res.status(401).json({
+      message: "Invalid",
+      success: false,
+    });
+  }
 
-    const user = await userModel.findById(id);
+  user.name = name || user.name;
+  user.email = email || user.email;
+  user.bio = bio || user.bio;
+  // user.password = hashPassword || user.password
 
-    if(!user){
-      return res.status(401).json({
-        message:"Invalid",
-        success:false
-      })
-    }
-    
-  
-    user.name = name || user.name
-    user.email = email || user.email
-    user.bio=bio || user.bio
-    // user.password = hashPassword || user.password
+  await user.save();
 
-    await user.save()
+  res.status(200).json({
+    message: "Edited Profile",
+    success: true,
+  });
+}
 
-    res.status(200).json({
-      message:"Edited Profile",
-      success:true
-    })
+export async function handleGetAllUser(req, res) {
+  const allUsers = await userModel.find({});
+  if (!allUsers) {
+    return res.status(400).json({
+      message: "No users found",
+      success: false,
+    });
+  }
+
+  res.status(200).json({
+    users: allUsers,
+  });
 }
