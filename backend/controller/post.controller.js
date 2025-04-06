@@ -1,8 +1,10 @@
+import imagekit from "../middlewares/image.js";
 import postModel from "../model/post.model.js";
 import userModel from "../model/user.model.js";
 
 export async function handleSendPost(req, res) {
   const { description, message } = req.body;
+  const file = req.file;
 
   if (!description || !message) {
     return res.status(400).json({
@@ -11,14 +13,34 @@ export async function handleSendPost(req, res) {
     });
   }
 
-  await postModel.create({
-    description,
-    message,
-    createdBy: req.user.userId,
-  });
-  res.json({
-    message: "Posted successFully",
-  });
+  if (!file) {
+    return res.status(400).json({ message: "No file uploaded" });
+  }
+
+  try {
+    // Upload image to ImageKit
+    const uploadResponse = await imagekit.upload({
+      file: file.buffer,
+      fileName: file.originalname,
+      folder: "/posts",
+    });
+
+    // Save post with image URL
+    await postModel.create({
+      description,
+      message,
+      photoUrl: uploadResponse.url, // 👈 Save image URL
+      createdBy: req?.user?.userId,
+    });
+
+    res.json({
+      message: "Posted successfully",
+      success: true,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Post upload failed", success: false });
+  }
 }
 
 export async function handleLikes(req, res) {

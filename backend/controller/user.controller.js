@@ -56,6 +56,7 @@ export async function handleLogin(req, res) {
     });
   }
 
+  
   const isValid = await bcrypt.compare(password, user.password);
 
   if (!isValid) {
@@ -152,12 +153,6 @@ export async function handleUserProfile(req, res) {
       success: false,
     });
   }
-
-  // res.status(200).json({
-  //   message: "user Found",
-  //   user,
-  //   success: true,
-  // });
 
   if (!loggedInUserid) {
     return res.status(400).json({

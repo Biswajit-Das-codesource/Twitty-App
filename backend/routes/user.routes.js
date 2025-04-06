@@ -14,9 +14,10 @@ const app = express.Router();
 
 app.post("/signup", handleRegister);
 app.post("/login", handleLogin);
-app.get("/profile/:id",checkAuth,handleUserProfile)
+app.get("/profile/:id", checkAuth, handleUserProfile);
 app.put("/follow/:id", checkAuth, handleFollower);
 app.post("/bookmark/:id", checkAuth, handleBookMark);
-app.put("/editprofile",checkAuth,handleEditProfile)
-app.get("/users",handleGetAllUser)
+app.put("/editprofile", checkAuth, handleEditProfile);
+app.get("/users", handleGetAllUser);
+
 export default app;
