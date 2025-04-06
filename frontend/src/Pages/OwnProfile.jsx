@@ -29,14 +29,16 @@ const ProfilePage = () => {
       setUser(response?.data?.loggedInUser);
       setPosts(response?.data?.userPosts);
       console.log(response?.data);
-    } catch (err) {}
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const [edit, setEdit] = useState({
     name: "",
     email: "",
     password: "",
-    bio: "",
+    bio: "",  
   });
 
   function handleChange(e) {

@@ -101,7 +101,6 @@ function Feed() {
   if (!isUser) {
     return <Navigate to="/login" replace />;
   }
-  
 
   return (
     <div className="min-h-screen w-full bg-gray-200 flex justify-center p-4 md:p-6">
@@ -124,19 +123,16 @@ function Feed() {
           <div className="bg-white p-4 rounded-2xl shadow-md">
             <b>Bookmarks</b>
           </div>
+          <Button
+            onClick={() => setPostInput(!postInput)}
+            className="w-1/2 bg-blue-500 border text-white rounded-3xl py-6 px-4 text-left shadow-md transition"
+          >
+            Create Post
+          </Button>
         </div>
         <Toaster richColors />
         {/* Feed Section */}
         <div className="w-full md:w-2/3 lg:w-3/4 space-y-2 overflow-y-auto mb-10">
-          <Card className="bg-white p-4 rounded-2xl shadow-md">
-            <Input
-              type="text"
-              className="w-full border border-black p-2 rounded-3xl"
-              placeholder="Post whatever you want"
-              onClick={() => setPostInput(!postInput)}
-            />
-          </Card>
-
           {feeds?.map((e) => (
             <Card
               key={e?._id}
@@ -170,7 +166,13 @@ function Feed() {
                 <b>{e?.description}</b>
                 <p className="mt-1 text-gray-700">{e?.message}</p>
               </div>
-
+              <div className="img h-80 w-full flex justify-center items-center overflow-hidden bg-cover">
+                <img
+                  src={e.photoUrl}
+                  alt="Post"
+                  className="h-full w-auto max-w-full object-contain sm:max-w-md md:max-w-lg lg:max-w-xl"
+                />
+              </div>
               <div className=" flex gap-4">
                 <Button
                   className="flex items-center bg-black text-white"
