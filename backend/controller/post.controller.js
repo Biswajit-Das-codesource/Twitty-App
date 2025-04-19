@@ -25,11 +25,10 @@ export async function handleSendPost(req, res) {
       folder: "/posts",
     });
 
-    // Save post with image URL
     await postModel.create({
       description,
       message,
-      photoUrl: uploadResponse.url, // 👈 Save image URL
+      photoUrl: uploadResponse.url, 
       createdBy: req?.user?.userId,
     });
 

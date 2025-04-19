@@ -4,8 +4,10 @@ import userRoutes from "./routes/user.routes.js";
 import cookieParser from "cookie-parser";
 import postRoutes from "./routes/post.routes.js";
 import cors from "cors"
-const app = express();
+import dotenv from "dotenv"
 
+const app = express();
+dotenv.config({})
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -17,7 +19,7 @@ app.use(cors({
 );
 
 mongoose
-  .connect("mongodb://localhost:27017/database")
+  .connect(process.env.MONGO_URL)
   .then(() => console.log("MongoDb connected"))
   .catch((e) => console.log("error", e));
 

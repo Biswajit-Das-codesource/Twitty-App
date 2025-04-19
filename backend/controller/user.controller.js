@@ -153,7 +153,7 @@ export async function handleUserProfile(req, res) {
       success: false,
     });
   }
-
+  
   if (!loggedInUserid) {
     return res.status(400).json({
       message: "Invalid",
